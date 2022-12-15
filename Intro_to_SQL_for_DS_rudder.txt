@@ -1,0 +1,451 @@
+Part 1: Yelp Dataset Profiling and Understanding
+
+1. Profile the data by finding the total number of records for each of the tables below:
+	
+i. 	Attribute table = 10000
+ii. 	Business table 	= 10000
+iii. 	Category table 	= 10000
+iv. 	Checkin table 	= 10000
+v. 	elite_years table = 10000
+vi. 	friend table 	= 10000
+vii. 	hours table 	= 10000
+viii. 	photo table 	= 10000
+ix. 	review table 	= 10000
+x. 	tip table 	= 10000
+xi. 	user table 	= 10000
+	
+
+
+2. Find the total distinct records by either the foreign key or primary key for each table. If two foreign keys are listed in the table, please specify which foreign key.
+
+i. 	Business 	= 10000 (id)
+ii. 	Hours 		= 1562 (business_id)
+iii. 	Category 	= 2643 (business_id)
+iv. 	Attribute 	= 1115 (business_id), 
+v. 	Review 		= 10000 (id), 8090 (business_id), 9581 (user_id)
+vi. 	Checkin 	= 493 (business_id)
+vii. 	Photo 		= 10000 (id), 6493 (business_id)
+viii. 	Tip 		= 537 (user_id), 3979 (business_id)
+ix. 	User 		= 10000 (id)
+x. 	Friend 		= 11 (user_id)
+xi. 	Elite_years 	= 2780 (user_id)
+
+Note: Primary Keys are denoted in the ER-Diagram with a yellow key icon.	
+
+
+
+3. Are there any columns with null values in the Users table? Indicate "yes," or "no."
+
+	Answer: No
+	
+	
+	SQL code used to arrive at answer:
+	
+	SELECT id, name, review_count, yelping_since, useful, funny, cool, fans, average_stars, 
+			   compliment_hot, compliment_more, compliment_profile, compliment_cute, compliment_list, 
+			   compliment_note, compliment_plain, compliment_cool, compliment_funny, compliment_writer, compliment_photos
+	FROM User
+	Where id IS NULL
+    		OR name IS NULL
+		OR review_count IS NULL
+		OR yelping_since IS NULL
+		OR useful IS NULL
+		OR funny IS NULL
+		OR cool IS NULL
+		OR fans IS NULL
+		OR average_stars IS NULL
+    		OR compliment_hot IS NULL
+		OR compliment_more IS NULL
+		OR compliment_profile IS NULL
+		OR compliment_cute IS NULL
+		OR compliment_list IS NULL
+		OR compliment_note IS NULL
+		OR compliment_plain IS NULL
+		OR compliment_cool IS NULL
+		OR compliment_funny IS NULL
+		OR compliment_writer IS NULL
+		OR compliment_photos IS NULL;        
+
+	
+		
+4. For each table and column listed below, display the smallest (minimum), largest (maximum), and average (mean) value for the following fields:
+
+	i. Table: Review, Column: Stars
+	
+		min: 1		max: 5		avg: 3.7082
+		
+	
+	ii. Table: Business, Column: Stars
+	
+		min:1.0		max:5.0		avg: 3.6549
+		
+	
+	iii. Table: Tip, Column: Likes
+	
+		min: 0		max: 2		avg: 0.0144
+		
+	
+	iv. Table: Checkin, Column: Count
+	
+		min: 1		max: 53		avg: 1.9414
+		
+	
+	v. Table: User, Column: Review_count
+	
+		min: 0		max: 2000	avg: 24.2995
+		
+
+
+5. List the cities with the most reviews in descending order:
+
+	SQL code used to arrive at answer:
+	
+	SELECT city, SUM(review_count)
+	FROM Business
+	Group BY City
+	ORDER BY SUM(review_count) DESC;
+	
+	
+	Copy and Paste the Result Below:
+	
+  city            | SUM(review_count) |
++-----------------+-------------------+
+| Las Vegas       |             82854 |
+| Phoenix         |             34503 |
+| Toronto         |             24113 |
+| Scottsdale      |             20614 |
+| Charlotte       |             12523 |
+| Henderson       |             10871 |
+| Tempe           |             10504 |
+| Pittsburgh      |              9798 |
+| Montréal        |              9448 |
+| Chandler        |              8112 |
+| Mesa            |              6875 |
+| Gilbert         |              6380 |
+| Cleveland       |              5593 |
+| Madison         |              5265 |
+| Glendale        |              4406 |
+| Mississauga     |              3814 |
+| Edinburgh       |              2792 |
+| Peoria          |              2624 |
+| North Las Vegas |              2438 |
+| Markham         |              2352 |
+| Champaign       |              2029 |
+| Stuttgart       |              1849 |
+| Surprise        |              1520 |
+| Lakewood        |              1465 |
+| Goodyear        |              1155 |
++-----------------+-------------------+
+(Output limit exceeded, 25 of 362 total rows shown)
+	
+6. Find the distribution of star ratings to the business in the following cities:
+
+i. Avon
+
+SQL code used to arrive at answer:
+
+	SELECT stars AS star_rating, Count(stars) AS star_count
+	FROM Business
+	WHERE city = 'Avon'
+	GROUP BY star_rating
+	ORDER BY star_rating ASC;
+
+Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
+
++-------------+------------+
+| star_rating | star_count |
++-------------+------------+
+|         1.5 |          1 |
+|         2.5 |          2 |
+|         3.5 |          3 |
+|         4.0 |          2 |
+|         4.5 |          1 |
+|         5.0 |          1 |
++-------------+------------+
+
+ii. Beachwood
+
+SQL code used to arrive at answer:
+
+	SELECT stars AS star_rating, Count(stars) AS star_count
+	FROM Business
+	WHERE city = 'Beachwood'
+	GROUP BY star_rating
+	ORDER BY star_rating ASC;
+	
+Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
+		
++-------------+------------+
+| star_rating | star_count |
++-------------+------------+
+|         2.0 |          1 |
+|         2.5 |          1 |
+|         3.0 |          2 |
+|         3.5 |          2 |
+|         4.0 |          1 |
+|         4.5 |          2 |
+|         5.0 |          5 |
++-------------+------------+
+
+7. Find the top 3 users based on their total number of reviews:
+		
+	SQL code used to arrive at answer:
+	
+	SELECT id, name, review_count
+	FROM User
+	ORDER BY review_count DESC
+	LIMIT 3;
+		
+	Copy and Paste the Result Below:
+	
++------------------------+--------+--------------+
+| id                     | name   | review_count |
++------------------------+--------+--------------+
+| -G7Zkl1wIWBBmD0KRy_sCw | Gerald |         2000 |
+| -3s52C4zL_DHRK0ULG6qtg | Sara   |         1629 |
+| -8lbUNlXVSoXqaRRiHiSNg | Yuri   |         1339 |
++------------------------+--------+--------------+	
+
+
+8. Does posing more reviews correlate with more fans?
+
+	Please explain your findings and interpretation of the results:
+	
+	No there doesn't seem to be a positive correlation between the number of reviews and the number of fans.
+	Based on the results of the query, the person the with most fans had approximately 30% of reviews than the person with the highest review count.
+	And None of the people with the highest review count were part of the top 3 for top number of fans.  
+	Gerald is the only person in the top 3 reviews that was close to the top (number 4) of having the most fans.  
+	Sara 2nd most reviews, was not in the top 25 for number of fans, and Yuri, 3rd most reviews was number 24 for top number of fans.
+
++------------------------+-----------+--------------+------+
+| id                     | name      | review_count | fans |
++------------------------+-----------+--------------+------+
+| -9I98YbNQnLdAmcYfb324Q | Amy       |          609 |  503 |
+| -8EnCioUmDygAbsYZmTeRQ | Mimi      |          968 |  497 |
+| --2vR0DIsmQ6WfcSzKWigw | Harald    |         1153 |  311 |
+| -G7Zkl1wIWBBmD0KRy_sCw | Gerald    |         2000 |  253 |
+| -0IiMAZI2SsQ7VmyzJjokQ | Christine |          930 |  173 |
+| -g3XIcCb2b-BD0QBCcq2Sw | Lisa      |          813 |  159 |
+| -9bbDysuiWeo2VShFJJtcw | Cat       |          377 |  133 |
+| -FZBTkAZEXoP7CYvRV2ZwQ | William   |         1215 |  126 |
+| -9da1xk7zgnnfO1uTVYGkA | Fran      |          862 |  124 |
+| -lh59ko3dxChBSZ9U7LfUw | Lissa     |          834 |  120 |
+| -B-QEUESGWHPE_889WJaeg | Mark      |          861 |  115 |
+| -DmqnhW4Omr3YhmnigaqHg | Tiffany   |          408 |  111 |
+| -cv9PPT7IHux7XUc9dOpkg | bernice   |          255 |  105 |
+| -DFCC64NXgqrxlO8aLU5rg | Roanna    |         1039 |  104 |
+| -IgKkE8JvYNWeGu8ze4P8Q | Angela    |          694 |  101 |
+| -K2Tcgh2EKX6e6HqqIrBIQ | .Hon      |         1246 |  101 |
+| -4viTt9UC44lWCFJwleMNQ | Ben       |          307 |   96 |
+| -3i9bhfvrM3F1wsC9XIB8g | Linda     |          584 |   89 |
+| -kLVfaJytOJY2-QdQoCcNQ | Christina |          842 |   85 |
+| -ePh4Prox7ZXnEBNGKyUEA | Jessica   |          220 |   84 |
+| -4BEUkLvHQntN6qPfKJP2w | Greg      |          408 |   81 |
+| -C-l8EHSLXtZZVfUAUhsPA | Nieves    |          178 |   80 |
+| -dw8f7FLaUmWR7bfJ_Yf0w | Sui       |          754 |   78 |
+| -8lbUNlXVSoXqaRRiHiSNg | Yuri      |         1339 |   76 |
+| -0zEEaDFIjABtPQni0XlHA | Nicole    |          161 |   73 |
++------------------------+-----------+--------------+------+
+(Output limit exceeded, 25 of 10000 total rows shown)
+
+
+	
+9. Are there more reviews with the word "love" or with the word "hate" in them?
+
+	Answer: There are more reviews with "love" in them.
+
++----------+----------+
+| num_love | num_hate |
++----------+----------+
+|     1780 |      232 |
++----------+----------+
+
+	
+	SQL code used to arrive at answer:
+
+	SELECT 
+    		(SELECT COUNT(text) AS num_love
+    		FROM Review
+    		WHERE text LIKE '%love%') AS num_love,
+        		(SELECT COUNT(text) AS num_hate
+        		FROM Review
+        		WHERE text LIKE '%hate%') AS num_hate;
+	
+10. Find the top 10 users with the most fans:
+
+	SQL code used to arrive at answer:
+	
+	Select name, fans AS num_fans
+	FROM User
+	ORDER BY num_fans DESC
+	LIMIT 10;
+
+	Copy and Paste the Result Below:
+
++-----------+----------+
+| name      | num_fans |
++-----------+----------+
+| Amy       |      503 |
+| Mimi      |      497 |
+| Harald    |      311 |
+| Gerald    |      253 |
+| Christine |      173 |
+| Lisa      |      159 |
+| Cat       |      133 |
+| William   |      126 |
+| Fran      |      124 |
+| Lissa     |      120 |
++-----------+----------+
+	
+		
+
+Part 2: Inferences and Analysis
+
+1. Pick one city and category of your choice and group the businesses in that city or category by their overall star rating. Compare the businesses with 2-3 stars to the businesses with 4-5 stars and answer the following questions. Include your code.
+	
+	CITY = Chandler; CATEGORY = Restaurants
+	There are two restaurants found: 
+	Irish Republic: review_count = 141, overal rating = 3.0, postal code = 85225, latitude = 33.3028 longitude = -111.842
+	Nabers Music, Bar & Eats: review_count = 75, overall rating = 4.0, postal code = 85226, latitude = 33.3163 longitude = -111.968
+
+i. Do the two groups you chose to analyze have a different distribution of hours?
+
+	No, the hours for the restaurants are similar.  There were only two restaurants in Chandler.  They are both open seven days a week.  
+	The Irish Republic Restaurant is open for 30 additional minutes per day.
+
+ii. Do the two groups you chose to analyze have a different number of reviews?
+
+	Yes, The Irish Republic has almost double the reviews of the Nabers Music, Bar & Eats with 141 and 75 respectively.         
+         
+iii. Are you able to infer anything from the location data provided between these two groups? Explain.
+
+	Both of the restaurants are in the same area or the city.  Their long and lat coordinates are very close together as is their postal codes.  
+	I do not think the location of the restaurants effected the overall ratings received. 
+
+SQL code used for analysis:
+
+	SELECT b.name, c.category, b.city, b.review_count, b.stars, h.hours, b. postal_code, b.latitude, b.longitude
+	FROM Business b 
+	INNER JOIN Category c ON b.id = c.business_id
+	INNER JOIN Hours h ON b.id = h.business_id
+	WHERE b.city = 'Chandler' AND c.category = 'Restaurants'
+	ORDER BY b.stars ASC
+
+		
+2. Group business based on the ones that are open and the ones that are closed. What differences can you find between the ones that are still open and the ones that are closed? List at least two differences and the SQL code you used to arrive at your answer.
+		
+i. Difference 1:
+
+	The first difference shown is that the number of the reviews for the businesses that are closed is much lower than the open businesses.  
+	This could be because they did not have enough customers to write reviews or they were not a memorable company.
+         
+ii. Difference 2:
+
+	The second difference is in their average rating. 
+	The open businesses have a higher average. 
+	For the Closed business it was approx 3.52 and for the Open business it was approx 3.68.      
+         
+         
+SQL code used for analysis:
+
+	SELECT COUNT(DISTINCT b.id) AS Total, b.is_open, AVG(stars), SUM(review_count), MIN(stars), MAX(stars)
+	FROM Business b
+	GROUP BY b.is_open
+
++-------+---------+---------------+-------------------+------------+------------+
+| Total | is_open |    AVG(stars) | SUM(review_count) | MIN(stars) | MAX(stars) |
++-------+---------+---------------+-------------------+------------+------------+
+|  1520 |       0 | 3.52039473684 |             35261 |        1.0 |        5.0 |
+|  8480 |       1 | 3.67900943396 |            269300 |        1.0 |        5.0 |
++-------+---------+---------------+-------------------+------------+------------+
+	
+	
+3. For this last part of your analysis, you are going to choose the type of analysis you want to conduct on the Yelp dataset and are going to prepare the data for analysis.
+
+Ideas for analysis include: Parsing out keywords and business attributes for sentiment analysis, clustering businesses to find commonalities or anomalies between them, predicting the overall star rating for a business, predicting the number of fans a user will have, and so on. These are just a few examples to get you started, so feel free to be creative and come up with your own problem you want to solve. Provide answers, in-line, to all of the following:
+	
+i. Indicate the type of analysis you chose to do:
+	How should business categorize their business, to get the most traffic.
+	Which type (category) of business earns the most reviews. 
+	And what about those businesses are unique that people would spend time to reivew them. 
+        
+         
+ii. Write 1-2 brief paragraphs on the type of data you will need for your analysis and why you chose that data:
+
+	To begin the analysis I would need to find the different categories that are in the table.
+	Then look at the number of business, open businesses, reviews, overall rating, and if they have written or useful reviews that are earned for each category as well as the average reviews.
+	
+	
+	I chose to look at the number of reviews to determine the category that had the most reviews.  
+	I also looked at the number of business that used this particular category and if they were open or closed.
+	The overall rating of the category along with if they have people write reviews and if the reviews are considered useful. 
+	After gathering the necessary data then look through the data to identify any patterns.  
+	If no patterns emerge then look to see which other attributes could be used to answer the questions.   
+
+	I chose the particular data to see which categories people tend to review. 
+	This could also give an idea to businesses on which category they should choose and how useful yelp is to their business.  
+	This could also help businesses determine how to use their yelp reviews in advertising and marketing.
+	When business are heavily reviewed they will ask for people to review them and they will let customers know how to give them a review.
+
+	From the results it was evident that the 'Restaurants' and 'Food' categories receive the most reviews and they would be more reliable for a customer to learn from.
+	However, the majority of the food type categories had over 1200 reviews.	
+	Since there are more businesses and open businesses in this category compared to other categories it is justified as to why they have more reviewers.  
+	The overall rating for these businesses were 3.3 - 4.2.
+	The were three categories which could not be related directly to food, Shopping, Market Stalls and Public Markets.  
+	However there is food 'shopping', and both Market Stalls and Public Markets could sell food.  A business should consider a category which is more closely related to food as well as these to have more traffic. 
+
+	'Restaurants' received the most reviews with 6322 almost twice than the next category of 'Food'.  
+	While they might be the same type of category they can have varying connatations to customers.  
+	The category'Food' is more general while 'Restaurants' is more specific and customers would understand this meaning. 
+
+	The category 'Restaurants' had the most written reviews and also the most reviews deemed useful.               
+                  
+iii. Output of your finished dataset:
+ 
++------------------------+------------+--------------+----------------+----------------+----------------+-----------------------+----------------+----------------+----------------+----------------+----------------+
+| category               | num_of_bus | num_open_bus | num_of_reviews | overall_rating | written_review | num_of_useful_reviews | num_of_1_stars | num_of_2_stars | num_of_3_stars | num_of_4_stars | num_of_5_stars |
++------------------------+------------+--------------+----------------+----------------+----------------+-----------------------+----------------+----------------+----------------+----------------+----------------+
+| Restaurants            |         75 |           57 |           6322 |  3.48666666667 |              9 |                     9 |              1 |              4 |             17 |             26 |              2 |
+| Food                   |         26 |           23 |           3366 |  3.82692307692 |              6 |                     6 |              0 |              0 |              2 |             10 |              3 |
+| Nightlife              |         22 |           14 |           2213 |  3.52272727273 |              4 |                     4 |              0 |              2 |              5 |              8 |              0 |
+| Bars                   |         19 |           13 |           2184 |  3.55263157895 |              3 |                     3 |              0 |              1 |              5 |              8 |              0 |
+| American (Traditional) |         13 |           10 |           1990 |  3.84615384615 |              4 |                     4 |              0 |              1 |              1 |              6 |              1 |
+| Shopping               |         31 |           26 |           1700 |            4.0 |              2 |                     2 |              0 |              2 |              0 |              6 |              5 |
+| Specialty Food         |          6 |            4 |           1619 |  4.08333333333 |              2 |                     2 |              0 |              0 |              0 |              3 |              0 |
+| Chinese                |          5 |            4 |           1564 |            3.3 |              2 |                     2 |              0 |              0 |              0 |              2 |              0 |
+| Asian Fusion           |          3 |            3 |           1561 |  3.66666666667 |              2 |                     2 |              0 |              0 |              1 |              2 |              0 |
+| Soup                   |          3 |            3 |           1557 |  3.83333333333 |              2 |                     2 |              0 |              0 |              0 |              2 |              0 |
+| Noodles                |          3 |            3 |           1541 |            3.5 |              2 |                     2 |              0 |              0 |              0 |              2 |              0 |
+| Malaysian              |          2 |            2 |           1536 |            4.0 |              2 |                     2 |              0 |              0 |              0 |              2 |              0 |
+| Taiwanese              |          2 |            2 |           1536 |            4.0 |              2 |                     2 |              0 |              0 |              0 |              2 |              0 |
+| Ethnic Food            |          3 |            3 |           1449 |  4.16666666667 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Farmers Market         |          2 |            2 |           1446 |            4.5 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Fruits & Veggies       |          2 |            2 |           1446 |            4.5 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Market Stalls          |          2 |            2 |           1446 |            4.5 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Meat Shops             |          2 |            2 |           1446 |            4.5 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Public Markets         |          2 |            2 |           1446 |            4.5 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Seafood Markets        |          2 |            2 |           1446 |            4.5 |              2 |                     2 |              0 |              0 |              0 |              0 |              0 |
+| Barbeque               |          4 |            4 |           1367 |          3.875 |              3 |                     3 |              0 |              0 |              0 |              3 |              0 |
+| Smokehouse             |          3 |            3 |           1293 |            4.0 |              3 |                     3 |              0 |              0 |              0 |              3 |              0 |
+| Sandwiches             |          8 |            6 |            974 |         3.9375 |              1 |                     1 |              0 |              0 |              0 |              2 |              1 |
+| Breakfast & Brunch     |          5 |            4 |            579 |            3.7 |              2 |                     2 |              0 |              0 |              1 |              3 |              0 |
+| American (New)         |          6 |            3 |            481 |  3.33333333333 |              0 |                     0 |              0 |              0 |              2 |              2 |              0 |
++------------------------+------------+--------------+----------------+----------------+----------------+-----------------------+----------------+----------------+----------------+----------------+----------------+
+(Output limit exceeded, 25 of 712 total rows shown)
+         
+iv. Provide the SQL code you used to create your final dataset:
+
+	SELECT DISTINCT c.category, COUNT (b.id) AS num_of_bus, SUM (b.is_open) AS num_open_bus,
+    		SUM (b.review_count) AS num_of_reviews, AVG (b.stars) AS overall_rating,
+    		SUM (CASE WHEN r.text IS NULL THEN 0 ELSE 1 END) AS written_review,
+    		COUNT (r.useful) AS num_of_useful_reviews,
+    		COUNT(CASE WHEN b.stars = 1 THEN 'ONE STAR' END) AS num_of_1_stars,
+    		COUNT(CASE WHEN b.stars = 2 THEN 'TWO STARS' END) AS num_of_2_stars,
+    		COUNT(CASE WHEN b.stars = 3 THEN 'THREE STARS' END) AS num_of_3_stars,
+    		COUNT(CASE WHEN b.stars = 4 THEN 'FOUR STARS' END) AS num_of_4_stars,
+    		COUNT(CASE WHEN b.stars = 5 THEN 'FIVE STARS' END) AS num_of_5_stars   
+	FROM Category c 
+	LEFT JOIN Business b ON c.business_id = b.id
+	LEFT JOIN Review r ON b.id = r.business_id
+	GROUP BY c.category 
+	ORDER BY num_of_reviews DESC

@@ -1,0 +1,217 @@
+FROM business Table
+
+## looking at the number each category to determine where the null values are
+SELECT COUNT(business_id) AS num_bus_id, COUNT(name) AS num_name, COUNT(stars) AS num_stars, COUNT(postal_code) AS num_postcodes, 
+COUNT(latitude) AS num_lat, COUNT(longitude) AS num_long, COUNT(state) AS num_state, COUNT(address) AS num_address, 
+COUNT(city) AS num_city
+FROM `carla-project-1.business.business`
+
+
+## finding the number of open business
+SELECT Count(is_open) AS open
+FROM `carla-project-1.business.business`
+WHERE is_open = 1
+
+
+## range of stars
+SELECT MAX(stars) AS max_stars, MIN(stars) AS min_stars
+FROM `carla-project-1.business.business`
+
+
+## determining the maximum and minimum reviews for a business
+SELECT MAX(review_count) AS max_reviews, MIN(review_count) AS min_reviews
+FROM `carla-project-1.business.business`
+
+
+## determining the number of business per category
+SELECT categories, COUNT(business_id) AS num_businesses
+FROM `carla-project-1.business.business`
+GROUP BY categories
+ORDER BY num_businesses DESC
+
+## gathering infomration about the businesses in the Coffee &Tea, Food Category 
+SELECT categories, business_id, name, city, state, stars, review_count
+FROM `carla-project-1.business.business`
+WHERE categories = 'Coffee & Tea, Food'
+ORDER BY review_count
+
+
+## gathering infomration about the businesses in the Coffee &Tea, Food Category 
+SELECT categories, business_id, name, city, state, stars, review_count
+FROM `carla-project-1.business.business`
+WHERE categories = 'Coffee & Tea, Food'
+ORDER BY review_count DESC
+
+## gathering infomration about the businesses in the Coffee &Tea, Food Category added the long and 
+##lati to determine if a business was duplicated
+SELECT categories, business_id, name, longitude, latitude, city, state, stars, review_count
+FROM `carla-project-1.business.business`
+WHERE categories = 'Coffee & Tea, Food'
+ORDER BY review_count DESC
+
+
+## gathering infomration about the businesses in the Coffee &Tea, Food Category added the long and lati to 
+determine if a business was duplicated added that the business is still open
+SELECT categories, business_id, name, longitude, latitude, city, state, stars, review_count
+FROM `carla-project-1.business.business`
+WHERE categories = 'Coffee & Tea, Food' AND is_open = 1
+ORDER BY review_count DESC
+
+
+
+FROM user table
+
+## number of users
+SELECT COUNT(user_id) AS num_users
+FROM `carla-project-1.user.user` 
+
+## date range of yelpers
+SELECT MAX(yelping_since) AS newest_yelper, MIN(yelping_since) AS oldest_yelper
+FROM `carla-project-1.user.user` 
+
+
+## number of users with no reviews
+SELECT COUNT(user_id) AS num_no_reviews
+FROM `carla-project-1.user.user`
+WHERE review_count = 0
+
+
+Created a new Table = Coffee & Tea, Food
+
+
+## descriptive stats for Coffee & Tea, Food category
+SELECT is_open, COUNT(business_id) AS num_of_business, MAX(review_count) AS max_rev_count, MIN (review_count) AS min_rev_count, Min(stars) AS min_stars, MAX(stars) AS max_stars, AVG(stars) AS avg_stars
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+GROUP BY is_open
+
+
+## number open business have Drive Thru
+SELECT COUNT(DriveThru) AS open_bus_w_drive_thru
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE DriveThru IS NOT null AND is_open = 1
+
+
+## number business have Drive Thru
+SELECT COUNT(DriveThru) AS tot_bus_w_drive_thru
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE DriveThru IS NOT null 
+
+
+## number business allowing dogs
+SELECT COUNT(DogsAllowed) AS tot_dogs_allowed
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE DogsAllowed IS NOT null 
+
+
+## number business allowing dogs that are still open
+SELECT COUNT(DogsAllowed) AS open_dogs_allowed
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE DogsAllowed IS NOT null AND is_open = 1
+
+
+## hours with wifi and open or closed, location
+SELECT business_id, name, WiFi, city, state, is_open, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+
+
+## hours with wifi and open, location
+SELECT business_id, name, WiFi, city, state, is_open, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE is_open = 1
+
+
+## offers WiFi for open ubsiness
+SELECT WiFi, COUNT(WiFi) AS num_offer
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE is_open = 1
+GROUP BY WiFi
+
+## offers WiFi for open business and the average stars and number of reviews
+SELECT WiFi, COUNT(WiFi) AS num_offer, AVG(stars) AS avg_stars, sum(review_count) AS num_reviews
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE is_open = 1 AND WiFi IS NOT null
+GROUP BY WiFi
+
+
+## number of open businesses by star rating
+SELECT stars, COUNT(stars) AS num_stars
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE is_open = 1
+GROUP BY stars
+ORDER BY stars DESC
+
+## looking at businesss and location to map it out
+SELECT state, city, name, is_open
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+ORDER BY state DESC
+
+
+## looking at businesss and location to map it out Starbucks only open vs close
+SELECT state, city, name, is_open
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` 
+WHERE name = "Starbucks"
+ORDER BY state DESC
+
+## find the number of users that reviewed Starbucks in the Coffee&Tea, Food Category and does it match the review count where
+SELECT user_id, business_id, text
+FROM `carla-project-1.review.review`
+WHERE business_id IN (SELECT business_id
+  FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food`
+  WHERE name = "Starbucks" )
+Order BY user_id
+
+
+## find the number of users that reviewed Starbucks in the Coffee&Tea, Food Category and does it match the review count
+SELECT user_id, business_id, stars, text
+FROM `carla-project-1.review.review`
+WHERE business_id IN (SELECT business_id
+  FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food`
+  WHERE name = "Starbucks")
+Order BY user_id
+
+
+## Left Join table A - Coffee_tea_food with table B - review
+SELECT r.date, c.business_id, c.name, c.stars AS bus_rating, c.is_open, c.city, c.state, r.user_id, r.stars AS user_rating, r.text
+FROM `carla-project-1.Coffee_Tea_Food.coffee_tea_food` c 
+LEFT JOIN `carla-project-1.review.review` r ON c.business_id = r.business_id
+
+
+## from ctf_reviews table looking want to see if there is a relationship between user ratings and when they were given for these closed business
+SELECT business_id, name, date, user_rating, bus_rating
+FROM `carla-project-1.ctf_reviews.ctf_reviews`
+WHERE is_open = 0
+GROUP BY business_id, date, user_rating, name, bus_rating
+ORDER BY date
+
+
+## find the top reviewrs 
+SELECT user_id, is_open, COUNT(is_open) AS num_open_close, COUNT(user_rating) AS num_rated, COUNT(text) AS num_text
+FROM `carla-project-1.ctf_reviews.ctf_reviews`
+GROUP BY is_open, user_rating, text, user_id
+ORDER BY num_rated DESC
+
+
+## top positive words and negative words 
+SELECT 
+  (SELECT COUNT(text) AS num_love
+  FROM `carla-project-1.ctf_reviews.ctf_reviews`
+  WHERE text LIKE '%love%') AS num_love,
+    (SELECT COUNT(text) AS num_great
+    FROM `carla-project-1.ctf_reviews.ctf_reviews`
+    WHERE text LIKE '%great%') AS num_great,
+      (SELECT COUNT(text) AS num_best
+      FROM `carla-project-1.ctf_reviews.ctf_reviews`
+      WHERE text LIKE '%best%') AS num_best,
+        (SELECT COUNT(text) AS num_hate
+        FROM `carla-project-1.ctf_reviews.ctf_reviews`
+        WHERE text LIKE '%hate%') AS num_hate,
+          (SELECT COUNT(text) AS num_worst
+          FROM `carla-project-1.ctf_reviews.ctf_reviews`
+          WHERE text LIKE '%worst%') AS num_worst,
+            (SELECT COUNT(text) AS num_terrible
+            FROM `carla-project-1.ctf_reviews.ctf_reviews`
+            WHERE text LIKE '%terrible%') AS num_terrible 
+FROM `carla-project-1.ctf_reviews.ctf_reviews`
+
+
+
